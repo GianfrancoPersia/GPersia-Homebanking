@@ -19,7 +19,6 @@ public class ClientController {
     //traigo todos los clientes
     @GetMapping
     public List<Client> getAllClients(){
-
         return clientRepository.findAll();
     }
 
