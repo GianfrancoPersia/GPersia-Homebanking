@@ -1,8 +1,11 @@
 package com.mindhub.Homebanking.Models;
 
+import com.mindhub.Homebanking.dtos.AccountDTO;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Account {
@@ -13,9 +16,14 @@ public class Account {
     private LocalDate creationDate;
     private double balance;
 
+    //relacion muchas cuentas a 1 cliente
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
+
+    //relacion cada cuenta puede tener muchas transacciones
+    @OneToMany(mappedBy = "account",fetch = FetchType.EAGER)
+    private List<Transaction> transactions = new ArrayList<>();
 
     public Account() {
     }
@@ -62,6 +70,15 @@ public class Account {
         this.client = client;
     }
 
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void addTransaction(Transaction transaction){
+        transaction.setAccount(this);
+        this.transactions.add(transaction);
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -69,6 +86,7 @@ public class Account {
                 ", number='" + number + '\'' +
                 ", creationDate=" + creationDate +
                 ", balance=" + balance +
+                ", trasanctions" + transactions +
                 '}';
     }
 }
