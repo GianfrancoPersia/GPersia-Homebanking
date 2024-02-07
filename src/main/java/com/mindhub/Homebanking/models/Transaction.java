@@ -1,8 +1,7 @@
-package com.mindhub.Homebanking.Models;
+package com.mindhub.Homebanking.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity

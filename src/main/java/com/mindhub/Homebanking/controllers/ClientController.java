@@ -1,7 +1,7 @@
-package com.mindhub.Homebanking.Controllers;
+package com.mindhub.Homebanking.controllers;
 
-import com.mindhub.Homebanking.Models.Client;
-import com.mindhub.Homebanking.Repositories.ClientRepository;
+import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.dtos.ClientDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,9 +1,8 @@
 package com.mindhub.Homebanking.dtos;
 
-import com.mindhub.Homebanking.Models.Transaction;
-import com.mindhub.Homebanking.Models.TransactionType;
+import com.mindhub.Homebanking.models.Transaction;
+import com.mindhub.Homebanking.models.TransactionType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TransactionDTO {

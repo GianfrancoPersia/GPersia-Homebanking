@@ -1,12 +1,10 @@
 package com.mindhub.Homebanking.dtos;
 
-import com.mindhub.Homebanking.Models.Account;
-import com.mindhub.Homebanking.Models.Transaction;
+import com.mindhub.Homebanking.models.Account;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

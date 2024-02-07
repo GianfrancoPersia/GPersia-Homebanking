@@ -1,4 +1,4 @@
-package com.mindhub.Homebanking.Models;
+package com.mindhub.Homebanking.models;
 
 public enum TransactionType {
     CREDIT,

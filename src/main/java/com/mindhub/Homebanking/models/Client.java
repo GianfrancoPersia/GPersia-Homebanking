@@ -1,9 +1,11 @@
-package com.mindhub.Homebanking.Models;
+package com.mindhub.Homebanking.models;
 
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -15,7 +17,11 @@ public class Client {
 
     //2
     @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
-    List<Account> accounts = new ArrayList<>();
+    private List<Account> accounts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
+    private Set<ClientLoan> clientLoans = new HashSet<>();
+
 
     public Client(){}
 
@@ -23,7 +29,6 @@ public class Client {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
-        this.accounts = accounts;
     }
 
     public long getId() {
@@ -55,15 +60,28 @@ public class Client {
     }
 
     //2
-
     public List<Account> getAccounts() {
         return accounts;
     }
+
 
     //2
     public void addAccount(Account account){
         account.setClient(this);
         this.accounts.add(account);
+    }
+
+    public Set<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void setClientLoans(Set<ClientLoan> clientLoans) {
+        this.clientLoans = clientLoans;
+    }
+
+    public void addLoanToMyClient(ClientLoan clientLoan){
+        clientLoan.setClient(this);
+        clientLoans.add(clientLoan);
     }
 
     @Override
@@ -74,6 +92,7 @@ public class Client {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", accounts=" + accounts +
+                ", clientLoan =" + clientLoans +
                 '}';
     }
 }

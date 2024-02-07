@@ -1,6 +1,5 @@
-package com.mindhub.Homebanking.Models;
+package com.mindhub.Homebanking.models;
 
-import com.mindhub.Homebanking.dtos.AccountDTO;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
