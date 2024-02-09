@@ -14,7 +14,7 @@ public class AccountDTO {
     private LocalDate creationDate;
     private double balance;
 
-    private List<TransactionDTO> transactions = new ArrayList<>();
+    private List<TransactionDTO> transactions;
 
     public AccountDTO(Account account) {
         this.id = account.getId();

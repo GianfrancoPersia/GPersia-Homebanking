@@ -16,7 +16,7 @@ public class ClientDTO {
     private Long id;
     private String name, lastName, email;
 
-    private List<AccountDTO> accounts = new ArrayList<>();
+    private List<AccountDTO> accounts;
 
     private Set<ClientLoanDTO> clientLoans;
 
