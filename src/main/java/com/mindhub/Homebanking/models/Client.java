@@ -1,5 +1,6 @@
 package com.mindhub.Homebanking.models;
 
+import com.mindhub.Homebanking.dtos.CardDTO;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ public class Client {
 
     @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
     private Set<ClientLoan> clientLoans = new HashSet<>();
+
+    @OneToMany(mappedBy = "cardHolder",fetch = FetchType.EAGER)
+    private Set<Card> cards = new HashSet<>();
 
 
     public Client(){}
@@ -59,30 +63,45 @@ public class Client {
         this.email = email;
     }
 
-    //2
     public List<Account> getAccounts() {
         return accounts;
-    }
-
-
-    //2
-    public void addAccount(Account account){
-        account.setClient(this);
-        this.accounts.add(account);
     }
 
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
     }
 
+    public Set<Card> getCards() {
+        return cards;
+    }
+
     public void setClientLoans(Set<ClientLoan> clientLoans) {
         this.clientLoans = clientLoans;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public void setCards(Set<Card> cards) {
+        this.cards = cards;
+    }
+
+    public void addAccount(Account account){
+        account.setClient(this);
+        this.accounts.add(account);
     }
 
     public void addLoanToMyClient(ClientLoan clientLoan){
         clientLoan.setClient(this);
         clientLoans.add(clientLoan);
     }
+
+    public void addCard(Card card){
+        card.setCardHolder(this);
+        cards.add(card);
+    }
+
 
     @Override
     public String toString() {
@@ -93,6 +112,7 @@ public class Client {
                 ", email='" + email + '\'' +
                 ", accounts=" + accounts +
                 ", clientLoan =" + clientLoans +
+                ", cards =" + cards +
                 '}';
     }
 }

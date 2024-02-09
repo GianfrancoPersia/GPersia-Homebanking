@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -19,6 +20,8 @@ public class ClientDTO {
 
     private Set<ClientLoanDTO> clientLoans;
 
+    private Set<CardDTO> cards;
+
     public ClientDTO(Client client) {
         this.id = client.getId();
         this.name = client.getName();
@@ -26,7 +29,7 @@ public class ClientDTO {
         this.email = client.getEmail();
         this.accounts = client.getAccounts().stream().map(AccountDTO::new).collect(toList());
         this.clientLoans = client.getClientLoans().stream().map(ClientLoanDTO::new).collect(toSet());
-
+        this.cards = client.getCards().stream().map(CardDTO::new).collect(toSet());
     }
 
     public Long getId() {
@@ -51,5 +54,9 @@ public class ClientDTO {
 
     public Set<ClientLoanDTO> getClientLoans() {
         return clientLoans;
+    }
+
+    public Set<CardDTO> getCards() {
+        return cards;
     }
 }
