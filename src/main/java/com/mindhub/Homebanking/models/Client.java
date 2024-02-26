@@ -14,7 +14,7 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name, lastName, email;
+    private String name, lastName, email, password;
 
     //2
     @OneToMany(mappedBy = "client",fetch = FetchType.EAGER)
@@ -29,10 +29,11 @@ public class Client {
 
     public Client(){}
 
-    public Client(String name, String lastName, String email) {
+    public Client(String name, String lastName, String email, String password) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
     }
 
     public long getId() {
@@ -85,6 +86,14 @@ public class Client {
 
     public void setCards(Set<Card> cards) {
         this.cards = cards;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void addAccount(Account account){

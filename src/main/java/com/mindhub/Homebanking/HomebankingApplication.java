@@ -2,10 +2,12 @@ package com.mindhub.Homebanking;
 
 import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,15 +15,17 @@ import java.util.List;
 
 @SpringBootApplication
 public class HomebankingApplication {
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {SpringApplication.run(HomebankingApplication.class, args);}
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, ClientLoanRepository clientLoanRepository, LoanRepository loanRepository, CardRepository cardRepository){
 		return args -> {
-			Client client_1 = new Client("Melba","Morel", "melbamorel@hotmail.com");
+			Client client_1 = new Client("Melba","Morel", "melbamorel@hotmail.com",passwordEncoder.encode("melba123"));
 			clientRepository.save(client_1);
 
-			Client client_2 = new Client("Gianfranco","Persia","gianfrancopersia@hotmail.com");
+			Client client_2 = new Client("Gianfranco","Persia","gianfrancopersia@hotmail.com",passwordEncoder.encode("giani123"));
 			clientRepository.save(client_2);
 
 
@@ -40,12 +44,12 @@ public class HomebankingApplication {
 			accountRepository.save(account_4);
 
 			//genero distintas transacciones
-			Transaction transaction_1 = new Transaction(TransactionType.DEBIT,"Boleta luz",LocalDateTime.now(),200);
-			Transaction transaction_2 = new Transaction(TransactionType.CREDIT,"Venta mercadolibre",LocalDateTime.now(),350);
-			Transaction transaction_3 = new Transaction(TransactionType.DEBIT,"Corte de pelo",LocalDateTime.now(),50);
-			Transaction transaction_4 = new Transaction(TransactionType.CREDIT,"Venta moto",LocalDateTime.now(),1500);
-			Transaction transaction_5 = new Transaction(TransactionType.DEBIT,"Boleta agua",LocalDateTime.now(),185);
-			Transaction transaction_6 = new Transaction(TransactionType.CREDIT,"Sueldo",LocalDateTime.now(),4500);
+			Transaction transaction_1 = new Transaction(TransactionType.DEBIT,"Electricity bill",LocalDateTime.now(),200);
+			Transaction transaction_2 = new Transaction(TransactionType.CREDIT,"Amazon sale",LocalDateTime.now(),350);
+			Transaction transaction_3 = new Transaction(TransactionType.DEBIT,"Haircut",LocalDateTime.now(),50);
+			Transaction transaction_4 = new Transaction(TransactionType.CREDIT,"Motorcycle for sale",LocalDateTime.now(),1500);
+			Transaction transaction_5 = new Transaction(TransactionType.DEBIT,"Water bill",LocalDateTime.now(),185);
+			Transaction transaction_6 = new Transaction(TransactionType.CREDIT,"Salary",LocalDateTime.now(),4500);
 
 			account_1.addTransaction(transaction_1);
 			account_1.addTransaction(transaction_2);
