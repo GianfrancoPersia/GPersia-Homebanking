@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+//lo establecemos como configuracion para que se aplique antes de que arranque la aplicacion
 @Configuration
 public class WebConfiguration {
 
@@ -33,10 +34,11 @@ public class WebConfiguration {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/login","/api/auth/register").permitAll()
-                                .requestMatchers("h2-console/**").hasAnyRole("ADMIN")
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/clients/current", "/api/clients/current/accounts", "/api/clients/current/cards").hasAnyRole("CLIENT")
+                                .anyRequest().hasRole("ADMIN")
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                //no funciona con sesiones porque trabajamos con tokens
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
@@ -46,6 +48,7 @@ public class WebConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(){return  new BCryptPasswordEncoder();}
 
+    //maneje la aplicacion teniendo en cuenta todo lo definido anteriormente
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws  Exception{
         return authenticationConfiguration.getAuthenticationManager();

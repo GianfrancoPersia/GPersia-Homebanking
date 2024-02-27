@@ -42,6 +42,12 @@ public class ClientController {
         return  ResponseEntity.ok().body(client);
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<?> getClient(){
+        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientRepository.findByEmail(userMail);
 
+        return  ResponseEntity.ok(new ClientDTO(client));
+    }
 
 }

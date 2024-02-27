@@ -3,9 +3,12 @@ package com.mindhub.Homebanking.controllers;
 import com.mindhub.Homebanking.dtos.ClientDTO;
 import com.mindhub.Homebanking.dtos.LoginDTO;
 import com.mindhub.Homebanking.dtos.RegisterDTO;
+import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.services.JwtUtilService;
+import com.mindhub.Homebanking.utils.MathRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,9 +41,25 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MathRandom mathRandom;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
     @PostMapping("/login")
     public  ResponseEntity<?> login (@RequestBody LoginDTO loginDTO){
         try {
+            Client client = clientRepository.findByEmail(loginDTO.email());
+
+            if(client == null){
+                return ResponseEntity.status(400).body("Email or password incorrect");
+            }
+
+            if(!passwordEncoder.matches(loginDTO.password(), client.getPassword())){
+                return ResponseEntity.status(400).body("Email or password incorrect");
+            }
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDTO.email());
             final String jwt = jwtUtilService.generateToken(userDetails);
@@ -67,22 +88,27 @@ public class AuthController {
                     registerDTO.lastName(),
                     registerDTO.email(),
                     passwordEncoder.encode(registerDTO.password()));
-            clientRepository.save(newClient);
 
-            return new ResponseEntity<>("Created", HttpStatus.CREATED);
+            String number = "VIN" + mathRandom.getRandomNumber(1,99999999);
+
+            while (accountRepository.findByNumber(number) != null){
+                number = "VIN" + mathRandom.getRandomNumber(1,99999999);
+            }
+
+            Account account = new Account(number, LocalDate.now(),0);
+            newClient.addAccount(account);
+
+            clientRepository.save(newClient);
+            accountRepository.save(account);
+
+            return new ResponseEntity<>("Created" , HttpStatus.CREATED);
 
         } catch (Exception e) {
             return new ResponseEntity<>("Incorrect data", HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/current")
-    public ResponseEntity<?> getClient(){
-        String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userMail);
 
-        return  ResponseEntity.ok(new ClientDTO(client));
-    }
 
     @GetMapping("/test")
     public ResponseEntity<?>test(){

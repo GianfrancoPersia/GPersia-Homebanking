@@ -99,13 +99,13 @@ public class HomebankingApplication {
 
 
 			//Crear Card
-			Card card_1 = new Card(CardType.DEBIT,CardColor.GOLD,"3455-7610-4090","333",LocalDate.now());
+			Card card_1 = new Card(CardType.DEBIT,CardColor.GOLD,"3455-7610-4090-0011","333",LocalDate.now());
 			client_1.addCard(card_1);
 
-			Card card_2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"4453-7112-5030","334",LocalDate.now());
+			Card card_2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"4453-7112-5030-0120","334",LocalDate.now());
 			client_1.addCard(card_2);
 
-			Card card_3 = new Card(CardType.CREDIT,CardColor.SILVER,"2153-0113-6133","604",LocalDate.now());
+			Card card_3 = new Card(CardType.CREDIT,CardColor.SILVER,"2153-0113-6133-1022","604",LocalDate.now());
 			client_2.addCard(card_3);
 			cardRepository.save(card_1);
 			cardRepository.save(card_2);
