@@ -33,8 +33,8 @@ public class WebConfiguration {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/auth/login","/api/auth/register").permitAll()
-                                .requestMatchers("/api/clients/current", "/api/clients/current/accounts", "/api/clients/current/cards").hasAnyRole("CLIENT")
+                                .requestMatchers("/api/auth/login","/api/auth/register","/h2-console/**").permitAll()
+                                .requestMatchers("/api/clients/current", "/api/clients/current/accounts", "/api/clients/current/cards","/api/clients/current/transactions").hasAnyRole("CLIENT")
                                 .anyRequest().hasRole("ADMIN")
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)

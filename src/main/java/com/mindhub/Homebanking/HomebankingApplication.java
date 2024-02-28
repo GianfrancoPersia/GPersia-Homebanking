@@ -44,24 +44,24 @@ public class HomebankingApplication {
 			accountRepository.save(account_4);
 
 			//genero distintas transacciones
-			Transaction transaction_1 = new Transaction(TransactionType.DEBIT,"Electricity bill",LocalDateTime.now(),200);
-			Transaction transaction_2 = new Transaction(TransactionType.CREDIT,"Amazon sale",LocalDateTime.now(),350);
-			Transaction transaction_3 = new Transaction(TransactionType.DEBIT,"Haircut",LocalDateTime.now(),50);
-			Transaction transaction_4 = new Transaction(TransactionType.CREDIT,"Motorcycle for sale",LocalDateTime.now(),1500);
+			//Transaction transaction_1 = new Transaction(TransactionType.DEBIT,"Electricity bill",LocalDateTime.now(),200);
+			//Transaction transaction_2 = new Transaction(TransactionType.CREDIT,"Amazon sale",LocalDateTime.now(),350);
+			//Transaction transaction_3 = new Transaction(TransactionType.DEBIT,"Haircut",LocalDateTime.now(),50);
+			//Transaction transaction_4 = new Transaction(TransactionType.CREDIT,"Motorcycle for sale",LocalDateTime.now(),1500);
 			Transaction transaction_5 = new Transaction(TransactionType.DEBIT,"Water bill",LocalDateTime.now(),185);
 			Transaction transaction_6 = new Transaction(TransactionType.CREDIT,"Salary",LocalDateTime.now(),4500);
 
-			account_1.addTransaction(transaction_1);
-			account_1.addTransaction(transaction_2);
-			account_2.addTransaction(transaction_3);
-			account_2.addTransaction(transaction_4);
+			//account_1.addTransaction(transaction_1);
+			//account_1.addTransaction(transaction_2);
+			//account_2.addTransaction(transaction_3);
+			//account_2.addTransaction(transaction_4);
 			account_3.addTransaction(transaction_5);
 			account_4.addTransaction(transaction_6);
 			//guardo todas las transacciones
-			transactionRepository.save(transaction_1);
-			transactionRepository.save(transaction_2);
-			transactionRepository.save(transaction_3);
-			transactionRepository.save(transaction_4);
+			//transactionRepository.save(transaction_1);
+			//transactionRepository.save(transaction_2);
+			//transactionRepository.save(transaction_3);
+			//transactionRepository.save(transaction_4);
 			transactionRepository.save(transaction_5);
 			transactionRepository.save(transaction_6);
 
