@@ -3,10 +3,7 @@ package com.mindhub.Homebanking.controllers;
 import com.mindhub.Homebanking.dtos.AccountDTO;
 import com.mindhub.Homebanking.dtos.CardCreateDTO;
 import com.mindhub.Homebanking.dtos.CardDTO;
-import com.mindhub.Homebanking.models.Account;
-import com.mindhub.Homebanking.models.Card;
-import com.mindhub.Homebanking.models.CardType;
-import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.CardRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
@@ -43,21 +40,21 @@ public class CardController {
 
         List<Card> cards = client.getCards().stream().toList();
 
-        List <Boolean> cardsTypeColor = cards.stream().map(card -> card.getType() == cardCreateDTO.type() && card.getColor() == cardCreateDTO.color()).toList();
+        List <Boolean> cardsTypeColor = cards.stream().map(card -> card.getType() == CardType.valueOf(cardCreateDTO.type()) && card.getColor() == CardColor.valueOf(cardCreateDTO.color())).toList();
 
         if(cardsTypeColor.contains(true)){
             return new ResponseEntity<>("You already have one card with type " + cardCreateDTO.type() + " and color " + cardCreateDTO.color(), HttpStatus.FORBIDDEN);
         }
-        String number = String.format("%04d", mathRandom.getRandomNumber(0, 1001)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 1001)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 1001)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 1001));
+        String number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
 
         while (cardRepository.findByNumber(number) != null){
-            number = String.format("%04d", mathRandom.getRandomNumber(0, 1001)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 1001)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 1001)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 1001));
+            number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
         }
 
         String cvv = String.format("%03d", mathRandom.getRandomNumber(0, 1000));
 
 
-        Card card = new Card(cardCreateDTO.type(),cardCreateDTO.color(),number,cvv, LocalDate.now());
+        Card card = new Card(CardType.valueOf(cardCreateDTO.type()),CardColor.valueOf(cardCreateDTO.color()),number,cvv, LocalDate.now());
 
         client.addCard(card);
 

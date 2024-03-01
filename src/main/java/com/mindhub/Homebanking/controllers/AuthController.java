@@ -1,13 +1,12 @@
 package com.mindhub.Homebanking.controllers;
 
-import com.mindhub.Homebanking.dtos.ClientDTO;
 import com.mindhub.Homebanking.dtos.LoginDTO;
 import com.mindhub.Homebanking.dtos.RegisterDTO;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
-import com.mindhub.Homebanking.services.JwtUtilService;
+import com.mindhub.Homebanking.securityServices.JwtUtilService;
 import com.mindhub.Homebanking.utils.MathRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

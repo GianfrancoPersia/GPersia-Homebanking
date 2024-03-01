@@ -36,10 +36,10 @@ public class CreateAccountController {
         List<Account> accounts = client.getAccounts().stream().toList();
 
         if (accounts.size() < 3){
-            String number = "VIN" + mathRandom.getRandomNumber(1,99999999);
+            String number = "VIN" + mathRandom.getRandomNumber(1,100000000);
 
             while (accountRepository.findByNumber(number) != null){
-                number = "VIN" + mathRandom.getRandomNumber(1,99999999);
+                number = "VIN" + mathRandom.getRandomNumber(1,100000000);
             }
 
             Account account = new Account(number, LocalDate.now(),0);

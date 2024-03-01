@@ -58,7 +58,9 @@ public class TransactionController {
             return new ResponseEntity<>("You cannot autotransfer money to your own account",HttpStatus.FORBIDDEN);
         }
 
-        if(!client.getAccounts().stream().anyMatch(account -> account.getNumber().equals(transactionCreateDTO.numberDebit()))){
+        Boolean accountExist = accountRepository.existsByNumberAndClient(transactionCreateDTO.numberDebit(), client);
+
+        if(!accountExist){
             return new ResponseEntity<>("The origin account is not valid", HttpStatus.FORBIDDEN);
         }
 
