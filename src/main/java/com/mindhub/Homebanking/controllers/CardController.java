@@ -7,6 +7,9 @@ import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.CardRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
+import com.mindhub.Homebanking.services.AccountService;
+import com.mindhub.Homebanking.services.CardService;
+import com.mindhub.Homebanking.services.ClientService;
 import com.mindhub.Homebanking.utils.MathRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,13 +25,11 @@ import java.util.List;
 @RequestMapping("/api/clients/current")
 public class CardController {
     @Autowired
-    ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
-    CardRepository cardRepository;
+    private CardService cardService;
 
-    @Autowired
-    AccountRepository accountRepository;
 
     @Autowired
     MathRandom mathRandom;
@@ -36,7 +37,7 @@ public class CardController {
     @PostMapping("/cards")
     public ResponseEntity<?> createCard(@RequestBody CardCreateDTO cardCreateDTO){
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userMail);
+        Client client = clientService.getClientByEmail(userMail);
 
         List<Card> cards = client.getCards().stream().toList();
 
@@ -47,7 +48,7 @@ public class CardController {
         }
         String number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
 
-        while (cardRepository.findByNumber(number) != null){
+        while (cardService.getCardByNumber(number) != null){
             number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
         }
 
@@ -58,8 +59,8 @@ public class CardController {
 
         client.addCard(card);
 
-        clientRepository.save(client);
-        cardRepository.save(card);
+        clientService.saveClient(client);
+        cardService.saveCard(card);
 
         return new ResponseEntity<>("New card generated", HttpStatus.CREATED);
     }
@@ -67,7 +68,7 @@ public class CardController {
     @GetMapping("/cards")
     public ResponseEntity<?> getCard(){
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userMail);
+        Client client = clientService.getClientByEmail(userMail);
         List<Card> cards = client.getCards().stream().toList();
 
         return ResponseEntity.ok(cards.stream().map(CardDTO::new).toList());

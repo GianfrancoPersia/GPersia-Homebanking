@@ -3,6 +3,7 @@ package com.mindhub.Homebanking.controllers;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.dtos.ClientDTO;
+import com.mindhub.Homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,34 +19,30 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api/clients")
 public class ClientController {
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
 
     //traigo todos los clientes
     @GetMapping("/")
     public ResponseEntity <?> getAllClients(){
-        List<Client> clients = clientRepository.findAll();
-        if (clients.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(clients);
+
+        return new ResponseEntity<>(clientService.getAllClientsDTO(),HttpStatus.OK);
     }
 
     //es una ruta variable para traer un cliente en especifico, si no existe devuelve null
     @GetMapping("/{id}")
     public ResponseEntity<?> getOneClientById(@PathVariable Long id){
-        Client client = clientRepository.findById(id).orElse(null);
-
+        Client client = clientService.getClientByID(id);
         if(client == null){
             return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found");
         }
-        return  ResponseEntity.ok().body(client);
+        return new ResponseEntity<>( client,HttpStatus.OK);
     }
 
     @GetMapping("/current")
     public ResponseEntity<?> getClient(){
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userMail);
+        Client client = clientService.getClientByEmail(userMail);
 
         return  ResponseEntity.ok(new ClientDTO(client));
     }

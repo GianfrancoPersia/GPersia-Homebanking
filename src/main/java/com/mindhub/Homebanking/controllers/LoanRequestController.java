@@ -3,6 +3,7 @@ package com.mindhub.Homebanking.controllers;
 import com.mindhub.Homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.*;
+import com.mindhub.Homebanking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,28 +18,29 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/clients/current")
 public class LoanRequestController {
     @Autowired
-    ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
-    LoanRepository loanRepository;
+    private LoanService loanService;
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    private TransactionService transactionService;
 
     @Autowired
-    ClientLoanRepository clientLoanRepository;
+    private ClientLoanService clientLoanService;
 
+    //Es una anotacion de Spring que se utiliza para administrar procesos transaccionales
     @Transactional
     @PostMapping("/loans")
     public ResponseEntity<?>requestLoan(@RequestBody LoanApplicationDTO loanApplicationDTO){
 
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userMail);
+        Client client = clientService.getClientByEmail(userMail);
 
-        Account account = accountRepository.findByNumber(loanApplicationDTO.number());
+        Account account = accountService.getAccountByNumber(loanApplicationDTO.number());
 
         if(loanApplicationDTO.amount() <=0){
             return new ResponseEntity<>("You must enter an amount", HttpStatus.FORBIDDEN);
@@ -48,7 +50,7 @@ public class LoanRequestController {
             return new ResponseEntity<>("You must enter a payment selection", HttpStatus.FORBIDDEN);
         }
 
-        Loan loan = loanRepository.findById(loanApplicationDTO.id()).orElse(null);
+        Loan loan = loanService.getLoanById(loanApplicationDTO.id());
 
         if(loan == null){
             return new ResponseEntity<>("The selected loan type was not found", HttpStatus.FORBIDDEN);
@@ -66,7 +68,7 @@ public class LoanRequestController {
             return new ResponseEntity<>("Target account does not exist",HttpStatus.FORBIDDEN);
         }
 
-        Boolean accountExist = accountRepository.existsByNumberAndClient(loanApplicationDTO.number(), client);
+        Boolean accountExist = accountService.existsByNumberAndClient(loanApplicationDTO.number(), client);
 
         if(!accountExist){
             return new ResponseEntity<>("The destination account is not valid", HttpStatus.FORBIDDEN);
@@ -80,10 +82,10 @@ public class LoanRequestController {
 
         account.addTransaction(transaction);
 
-        clientRepository.save(client);
-        accountRepository.save(account);
-        transactionRepository.save(transaction);
-        clientLoanRepository.save(clientLoan);
+        clientService.saveClient(client);
+        accountService.saveAccount(account);
+        transactionService.saveTransaction(transaction);
+        clientLoanService.saveClientLoan(clientLoan);
 
         return new ResponseEntity<>("Total loan payable: "+ clientLoan.getAmount() + " at " + clientLoan.getPayments() + " payments " + "from: " + clientLoan.getAmount() / clientLoan.getPayments(), HttpStatus.CREATED);
     }

@@ -33,4 +33,9 @@ public class ClientServiceImplements implements ClientService {
     public Client getClientByEmail(String email) {
         return clientRepository.findByEmail(email);
     }
+
+    @Override
+    public void saveClient(Client client) {
+        clientRepository.save(client);
+    }
 }

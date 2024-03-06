@@ -15,4 +15,6 @@ public interface ClientService {
     Client getClientByID(Long id);
 
     Client getClientByEmail(String email);
+
+    void saveClient (Client client);
 }

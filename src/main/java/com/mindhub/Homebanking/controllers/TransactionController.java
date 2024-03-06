@@ -8,6 +8,9 @@ import com.mindhub.Homebanking.models.TransactionType;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.repositories.TransactionRepository;
+import com.mindhub.Homebanking.services.AccountService;
+import com.mindhub.Homebanking.services.ClientService;
+import com.mindhub.Homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,19 +27,19 @@ import java.time.LocalDateTime;
 public class TransactionController {
 
     @Autowired
-    ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    private TransactionService transactionService;
 
     @Transactional
     @PostMapping("/transactions")
     public ResponseEntity<?> createTransactions(@RequestBody TransactionCreateDTO transactionCreateDTO){
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = clientRepository.findByEmail(userMail);
+        Client client = clientService.getClientByEmail(userMail);
 
         if (transactionCreateDTO.description().isBlank()){
             return new ResponseEntity<>("The description field is empty", HttpStatus.FORBIDDEN);
@@ -48,7 +51,7 @@ public class TransactionController {
             return new ResponseEntity<>("You must enter a destination account",HttpStatus.FORBIDDEN);
         }
 
-        Account accountCredit = accountRepository.findByNumber(transactionCreateDTO.numberCredit());
+        Account accountCredit = accountService.getAccountByNumber(transactionCreateDTO.numberCredit());
 
         if (accountCredit == null){
             return new ResponseEntity<>("Target account does not exist",HttpStatus.FORBIDDEN);
@@ -58,13 +61,13 @@ public class TransactionController {
             return new ResponseEntity<>("You cannot autotransfer money to your own account",HttpStatus.FORBIDDEN);
         }
 
-        Boolean accountExist = accountRepository.existsByNumberAndClient(transactionCreateDTO.numberDebit(), client);
+        Boolean accountExist = accountService.existsByNumberAndClient(transactionCreateDTO.numberDebit(), client);
 
         if(!accountExist){
             return new ResponseEntity<>("The origin account is not valid", HttpStatus.FORBIDDEN);
         }
 
-        Account accountDebit = accountRepository.findByNumber(transactionCreateDTO.numberDebit());
+        Account accountDebit = accountService.getAccountByNumber(transactionCreateDTO.numberDebit());
 
         if (accountDebit.getBalance() < transactionCreateDTO.amount()){
             return new ResponseEntity<>("You do not have enough money", HttpStatus.FORBIDDEN);
@@ -75,15 +78,15 @@ public class TransactionController {
 
         Transaction transactionDebit = new Transaction(TransactionType.DEBIT,transactionCreateDTO.description(), LocalDateTime.now(), - (transactionCreateDTO.amount()));
         Transaction transactionCredit = new Transaction(TransactionType.CREDIT,transactionCreateDTO.description(), LocalDateTime.now(), transactionCreateDTO.amount());
-        transactionRepository.save(transactionDebit);
-        transactionRepository.save(transactionCredit);
+        transactionService.saveTransaction(transactionDebit);
+        transactionService.saveTransaction(transactionCredit);
 
         accountDebit.addTransaction(transactionDebit);
         accountCredit.addTransaction(transactionCredit);
-        accountRepository.save(accountDebit);
-        accountRepository.save(accountCredit);
+        accountService.saveAccount(accountDebit);
+        accountService.saveAccount(accountCredit);
 
-        clientRepository.save(client);
+        clientService.saveClient(client);
 
         return new ResponseEntity<>("Transaction sucessfully", HttpStatus.CREATED);
     }

@@ -7,6 +7,7 @@ import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.securityServices.JwtUtilService;
+import com.mindhub.Homebanking.services.ClientService;
 import com.mindhub.Homebanking.utils.MathRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,8 +35,6 @@ public class AuthController {
     @Autowired
     private JwtUtilService jwtUtilService;
 
-    @Autowired
-    private ClientRepository clientRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,10 +45,13 @@ public class AuthController {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private ClientService clientService;
+
     @PostMapping("/login")
     public  ResponseEntity<?> login (@RequestBody LoginDTO loginDTO){
         try {
-            Client client = clientRepository.findByEmail(loginDTO.email());
+            Client client = clientService.getClientByEmail(loginDTO.email());
 
             if(client == null){
                 return ResponseEntity.status(400).body("Email or password incorrect");
@@ -97,7 +99,7 @@ public class AuthController {
             Account account = new Account(number, LocalDate.now(),0);
             newClient.addAccount(account);
 
-            clientRepository.save(newClient);
+            clientService.saveClient(newClient);
             accountRepository.save(account);
 
             return new ResponseEntity<>("Created" , HttpStatus.CREATED);
