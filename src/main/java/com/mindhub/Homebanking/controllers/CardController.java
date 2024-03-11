@@ -1,15 +1,12 @@
 package com.mindhub.Homebanking.controllers;
 
-import com.mindhub.Homebanking.dtos.AccountDTO;
+
 import com.mindhub.Homebanking.dtos.CardCreateDTO;
 import com.mindhub.Homebanking.dtos.CardDTO;
 import com.mindhub.Homebanking.models.*;
-import com.mindhub.Homebanking.repositories.AccountRepository;
-import com.mindhub.Homebanking.repositories.CardRepository;
-import com.mindhub.Homebanking.repositories.ClientRepository;
-import com.mindhub.Homebanking.services.AccountService;
 import com.mindhub.Homebanking.services.CardService;
 import com.mindhub.Homebanking.services.ClientService;
+import com.mindhub.Homebanking.utils.CardUtils;
 import com.mindhub.Homebanking.utils.MathRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +31,7 @@ public class CardController {
     @Autowired
     MathRandom mathRandom;
 
+
     @PostMapping("/cards")
     public ResponseEntity<?> createCard(@RequestBody CardCreateDTO cardCreateDTO){
         String userMail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -46,13 +44,14 @@ public class CardController {
         if(cardsTypeColor.contains(true)){
             return new ResponseEntity<>("You already have one card with type " + cardCreateDTO.type() + " and color " + cardCreateDTO.color(), HttpStatus.FORBIDDEN);
         }
-        String number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
+
+        String number = getCardNumber(mathRandom);
 
         while (cardService.getCardByNumber(number) != null){
-            number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
+            number = getCardNumber(mathRandom);
         }
 
-        String cvv = String.format("%03d", mathRandom.getRandomNumber(0, 1000));
+        String cvv = getCVV(mathRandom);
 
 
         Card card = new Card(CardType.valueOf(cardCreateDTO.type()),CardColor.valueOf(cardCreateDTO.color()),number,cvv, LocalDate.now());
@@ -63,6 +62,16 @@ public class CardController {
         cardService.saveCard(card);
 
         return new ResponseEntity<>("New card generated", HttpStatus.CREATED);
+    }
+
+    public static String getCVV(MathRandom mathRandom) {
+        String cvv = String.format("%03d", mathRandom.getRandomNumber(0, 1000));
+        return cvv;
+    }
+
+    private static String getCardNumber(MathRandom mathRandom) {
+        String number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
+        return number;
     }
 
     @GetMapping("/cards")
