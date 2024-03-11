@@ -45,13 +45,13 @@ public class CardController {
             return new ResponseEntity<>("You already have one card with type " + cardCreateDTO.type() + " and color " + cardCreateDTO.color(), HttpStatus.FORBIDDEN);
         }
 
-        String number = getCardNumber(mathRandom);
+        String number = cardService.getCardNumber(mathRandom);
 
         while (cardService.getCardByNumber(number) != null){
-            number = getCardNumber(mathRandom);
+            number = cardService.getCardNumber(mathRandom);
         }
 
-        String cvv = getCVV(mathRandom);
+        String cvv = cardService.getCVV(mathRandom);
 
 
         Card card = new Card(CardType.valueOf(cardCreateDTO.type()),CardColor.valueOf(cardCreateDTO.color()),number,cvv, LocalDate.now());
@@ -62,16 +62,6 @@ public class CardController {
         cardService.saveCard(card);
 
         return new ResponseEntity<>("New card generated", HttpStatus.CREATED);
-    }
-
-    public static String getCVV(MathRandom mathRandom) {
-        String cvv = String.format("%03d", mathRandom.getRandomNumber(0, 1000));
-        return cvv;
-    }
-
-    private static String getCardNumber(MathRandom mathRandom) {
-        String number = String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000)) + "-" + String.format("%04d", mathRandom.getRandomNumber(0, 10000));
-        return number;
     }
 
     @GetMapping("/cards")
